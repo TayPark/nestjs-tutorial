@@ -8,7 +8,7 @@ export class UsersService {
   // to use fake database
   private users: User[] = [];
 
-  async findAll(): Promise<User[]> {
+  findAll(): User[] {
     return this.users;
   }
 
@@ -39,8 +39,8 @@ export class UsersService {
     return this.users;
   }
 
-  deleteOne(userId: number) {
-    this.findOne(userId);
+  deleteOne(userId: number): User[] {
     this.users = this.users.filter((user) => user.id !== userId);
+    return this.users;
   }
 }
