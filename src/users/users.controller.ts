@@ -18,29 +18,29 @@ export class UsersController {
 
   @Get()
   findAll() {
-    return this.userService.findAll();
+    return this.userService.find();
   }
 
   @Get(':id')
-  findOne(@Param('id') id: number): User {
+  async findOne(@Param('id') id: number): Promise<User> {
     return this.userService.findOne(id);
   }
 
   @Post()
-  create(@Body() userData: CreateUserDto): User[] {
-    return this.userService.create(userData);
+  async create(@Body() userData: CreateUserDto): Promise<User> {
+    return this.userService.join(userData);
   }
 
   @Patch(':id')
-  updateOne(
+  async updateOne(
     @Param('id') userId: number,
     @Body() updateData: UpdateUserDto,
-  ): User[] {
+  ): Promise<User> {
     return this.userService.updateOne(userId, updateData);
   }
 
   @Delete(':id')
-  deleteOne(@Param('id') userId: number) {
+  async deleteOne(@Param('id') userId: number) {
     return this.userService.deleteOne(userId);
   }
 }
