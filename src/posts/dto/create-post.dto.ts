@@ -1,9 +1,6 @@
-import { IsBoolean, IsDate, IsNumber, IsString } from 'class-validator';
+import { IsBoolean, IsString, IsOptional } from 'class-validator';
 
 export class CreatePostDto {
-  @IsNumber()
-  id: number;
-
   @IsString()
   title: string;
 
@@ -11,14 +8,10 @@ export class CreatePostDto {
   content: string;
 
   @IsString()
+  @IsOptional()
   category: string;
 
   @IsBoolean()
+  @IsOptional()
   published: boolean;
-
-  @IsDate()
-  createdAt: Date;
-
-  @IsDate()
-  updatedAt: Date;
 }

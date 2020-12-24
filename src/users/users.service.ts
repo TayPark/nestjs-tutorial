@@ -7,20 +7,22 @@ import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class UsersService {
-  // to use fake database
-  private users: User[] = [];
-
   constructor(private prisma: PrismaService) {}
 
-  // with Sqlite DB
   async find(): Promise<User[]> {
     return this.prisma.user.findMany();
   }
 
   async findOne(userId: number): Promise<User> {
-    return this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
+
+    if (!user) {
+      throw new NotFoundException(`User id ${userId} is not exist`);
+    }
+
+    return user;
   }
 
   async join(data: Prisma.UserCreateInput): Promise<User> {
@@ -35,7 +37,7 @@ export class UsersService {
     });
   }
 
-  async updateOne(id: number, data: UpdateUserDto): Promise<User> {
+  async updateOne(id: number, data: Prisma.UserUpdateInput): Promise<User> {
     return this.prisma.user.update({
       data,
       where: { id },
