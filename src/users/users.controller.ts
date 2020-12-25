@@ -6,10 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  UseGuards,
+  Request,
 } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './model/users.model';
+import { User as UserModel } from './model/users.model';
 import { UsersService } from './users.service';
 
 @Controller('users')
@@ -22,12 +25,12 @@ export class UsersController {
   }
 
   @Get(':id')
-  async findOne(@Param('id') id: number): Promise<User> {
+  async findOne(@Param('id') id: number): Promise<UserModel> {
     return this.userService.findOne(id);
   }
 
   @Post()
-  async create(@Body() userData: CreateUserDto): Promise<User> {
+  async create(@Body() userData: CreateUserDto): Promise<UserModel> {
     return this.userService.join(userData);
   }
 
@@ -35,7 +38,7 @@ export class UsersController {
   async updateOne(
     @Param('id') userId: number,
     @Body() updateData: UpdateUserDto,
-  ): Promise<User> {
+  ): Promise<UserModel> {
     return this.userService.updateOne(userId, updateData);
   }
 

@@ -1,5 +1,5 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
-import { User } from './model/users.model';
+import { User as UserModel } from './model/users.model';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { CreateUserDto } from './dto/create-user.dto';
 import { PrismaService } from 'src/prisma.service';
@@ -9,11 +9,11 @@ import { Prisma } from '@prisma/client';
 export class UsersService {
   constructor(private prisma: PrismaService) {}
 
-  async find(): Promise<User[]> {
+  async find(): Promise<UserModel[]> {
     return this.prisma.user.findMany();
   }
 
-  async findOne(userId: number): Promise<User> {
+  async findOne(userId: number): Promise<UserModel> {
     const user = await this.prisma.user.findUnique({
       where: { id: userId },
     });
@@ -25,7 +25,17 @@ export class UsersService {
     return user;
   }
 
-  async join(data: Prisma.UserCreateInput): Promise<User> {
+  async findByName(userName: string): Promise<UserModel> {
+    const user = await this.prisma.user.findFirst({
+      where: { name: userName },
+    });
+    if (!user) {
+      throw new NotFoundException(`No user.`);
+    }
+    return user;
+  }
+
+  async join(data: Prisma.UserCreateInput): Promise<UserModel> {
     return this.prisma.user.create({
       data,
     });
@@ -37,55 +47,16 @@ export class UsersService {
     });
   }
 
-  async updateOne(id: number, data: Prisma.UserUpdateInput): Promise<User> {
+  async updateOne(id: number, data: Prisma.UserUpdateInput): Promise<UserModel> {
     return this.prisma.user.update({
       data,
       where: { id },
     });
   }
 
-  async deleteOne(id: number): Promise<User> {
+  async deleteOne(id: number): Promise<UserModel> {
     return this.prisma.user.delete({
       where: { id },
     });
   }
-
-  /**
-   * @deprecated due to use real DB
-   */
-  // findAll(): User[] {
-  //   return this.users;
-  // }
-
-  // findOne(userId: number): User {
-  //   const userData = this.users.find((user) => user.id === userId);
-  //   if (!userData) {
-  //     throw new NotFoundException(`User not found id: ${userId}`);
-  //   }
-  //   return userData;
-  // }
-
-  // create(createData: CreateUserDto): User[] {
-  //   this.users.push({
-  //     id: this.users.length, // auto_increment
-  //     ...createData,
-  //     createdAt: new Date(),
-  //     updatedAt: new Date(),
-  //   });
-
-  //   return this.users;
-  // }
-
-  // updateOne(userId: number, updateData: UpdateUserDto): User[] {
-  //   const user = this.findOne(userId);
-  //   this.deleteOne(userId);
-  //   this.users.push({ ...user, ...updateData, updatedAt: new Date() });
-
-  //   return this.users;
-  // }
-
-  // deleteOne(userId: number): User[] {
-  //   this.users = this.users.filter((user) => user.id !== userId);
-  //   return this.users;
-  // }
 }

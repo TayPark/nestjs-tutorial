@@ -7,9 +7,7 @@ import {
   Patch,
   Post,
 } from '@nestjs/common';
-import { Post as PostModel } from '@prisma/client';
-import { CreatePostDto } from './dto/create-post.dto';
-import { UpdatePostDto } from './dto/update-post.dto';
+import { Post as PostModel, Prisma } from '@prisma/client';
 import { PostService } from './posts.service';
 
 @Controller('posts')
@@ -27,19 +25,19 @@ export class PostController {
   }
 
   @Post()
-  async create(@Body() data: CreatePostDto): Promise<PostModel> {
+  async create(@Body() data: Prisma.PostCreateInput): Promise<PostModel> {
     return this.postService.create(data);
   }
 
-  @Patch()
+  @Patch(':id')
   async updateOne(
     @Param('id') id: number,
-    data: UpdatePostDto,
+    data: Prisma.PostUpdateInput,
   ): Promise<PostModel> {
     return this.postService.updateOne(id, data);
   }
 
-  @Delete()
+  @Delete(':id')
   async deleteOne(@Param('id') id: number): Promise<PostModel[]> {
     return this.postService.deleteOne(id);
   }

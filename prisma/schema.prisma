@@ -9,7 +9,8 @@ generator client {
 
 model User {
   id        Int       @default(autoincrement())   @id
-  name      String?
+  name      String
+  password  String
   age       Int
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
@@ -18,11 +19,11 @@ model User {
 model Post {
   id        Int       @default(autoincrement()) @id
   title     String
-  content   String?
+  content   String
   category  String?
   published Boolean?  @default(false)
-  author    User?     @relation(fields: [authorId], references: [id])
-  authorId  Int?
+  author    User     @relation(fields: [authorId], references: [id])
+  authorId  Int
   createdAt DateTime? @default(now())
   updatedAt DateTime? @updatedAt
 }
