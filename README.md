@@ -248,3 +248,38 @@ config(): string {
 
 ---
 
+`Serialization, 직렬화`는 네트워크나 데이터를 주고받을 때 오브젝트 데이터를 포매팅하는 기법을 말한다. 서버 내부에서 사용하는 민감한 정보는 네트워크를 통해 외부로 유출되면 안된다. NestJS는 `class-transformer` 패키지의 `@Exclude()` 데코레이터를 사용하여 간단하게 직렬화 할 수 있다.
+
+```js
+// user.model.ts
+export class User {
+  id: number;
+  name: string;
+
+  @Exclude()    // 해당 데코레이터의 사용으로 모든 클래스에서 
+  password: string;
+
+  constructor(partial: Partial<User>) {
+    Object.assign(this, partial);
+  }
+}
+```
+
+```js
+@Get('serialize')
+@Transform(user => user.id)
+@SerializeOptions({
+  excludePrefixes: ['_'],
+})
+@UseInterceptors(ClassSerializerInterceptor)
+returnOneUser(): UserModel {
+  return new UserModel({
+    id: 1,
+    name: 'taypark',
+    password: '1q2w3e4r!', // user model에서 @Exclude() 데코레이터로 인해 password가 제외된다.
+    age: 26,
+  });
+}
+```
+
+참고로 **무조건 클래스의 인스턴트를 반환해야**한다. 만약 오브젝트를 반환할 경우 (`{ user: new User() }`) 직렬화가 안된다.
